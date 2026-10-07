@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Bet House</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600&family=Oswald:wght@500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+  <div class="home">
+    <div class="brand">Bet House</div>
+    <h1>Two markets. One wallet. A score decides the rest.</h1>
+    <p class="lede">Players stake integer kSEK on Green or Blue. Master sets the weights. Designer reads both houses and prints the entry code.</p>
+    <div class="cards">
+      <a class="card-link player" href="player.html"><strong>Player</strong><span>Name, then the Orange and Red tickets.</span></a>
+      <a class="card-link master" href="master.html"><strong>Master</strong><span>Target profit, weights, and the book.</span></a>
+      <a class="card-link designer" href="designer.html"><strong>Designer</strong><span>Both houses, one score, and the QR.</span></a>
+    </div>
+    <p id="mode" class="mode-pill" style="display:inline-block;margin-top:18px">Checking store…</p>
+  </div>
+  <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore-compat.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/common.js"></script>
+  <script>
+    var mode = document.getElementById("mode");
+    if (window.BetHouse && BetHouse.mode === "firebase") {
+      mode.textContent = "Firebase connected";
+      mode.classList.add("live");
+    } else {
+      mode.textContent = "Preview mode — paste Firebase config to share data";
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Player — Bet House</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600&family=Oswald:wght@500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand"><a href="index.html">Bet House</a></div>
+    <div id="mode" class="mode-pill">…</div>
+  </div>
+  <main class="shell">
+    <section id="gate" class="gate">
+      <h1>Enter your name</h1>
+      <p>One name, once. It is stored before the ticket opens.</p>
+      <div class="row">
+        <input id="name" maxlength="24" autocomplete="off" placeholder="Name">
+        <button id="proceed" class="primary" type="button">Proceed</button>
+      </div>
+      <p id="gate-note" class="note"></p>
+    </section>
+
+    <section id="bet" class="hidden">
+      <div class="wallet"><span>Available</span><b id="available">100</b><span>kSEK</span></div>
+      <button id="place" class="primary bet-btn" type="button">Place your Bet</button>
+      <div class="market-tabs">
+        <button type="button" id="tab-orange">Orange</button>
+        <button type="button" id="tab-red">Red</button>
+      </div>
+      <div id="identity" class="identity orange"></div>
+      <div id="board" class="board"></div>
+    </section>
+
+    <section id="outro" class="outro hidden">
+      <h1>Bet placed</h1>
+      <p id="outro-lead"></p>
+      <div id="outro-body"></div>
+    </section>
+  </main>
+  <div id="toast" class="toast hidden"></div>
+  <div id="modal" class="modal hidden">
+    <div class="sheet">
+      <p id="modal-text"></p>
+      <div class="actions">
+        <button type="button" id="bet-more" class="ghost">Bet more</button>
+        <button type="button" id="confirm-yes" class="primary">Yes</button>
+      </div>
+    </div>
+  </div>
+  <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore-compat.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/player.js"></script>
+</body>
+</html>

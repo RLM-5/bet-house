@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Master — Bet House</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600&family=Oswald:wght@500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand"><a href="index.html">Bet House</a></div>
+    <div id="mode" class="mode-pill">…</div>
+  </div>
+  <main class="shell wide">
+    <div class="market-tabs">
+      <button type="button" id="tab-orange">Orange</button>
+      <button type="button" id="tab-red">Red</button>
+    </div>
+    <div id="identity" class="identity orange"></div>
+    <div class="subtabs">
+      <button type="button" id="view-weights" class="active">Weights</button>
+      <button type="button" id="view-book">Participants</button>
+    </div>
+    <section id="weights">
+      <div class="profit-line">
+        <label for="profit">Target profit</label>
+        <input id="profit" class="profit-input" inputmode="decimal" value="5">
+        <span>%</span>
+        <span id="profit-warn" class="warn"></span>
+      </div>
+      <div id="board" class="board"></div>
+    </section>
+    <section id="book" class="hidden">
+      <p class="table-note">Computer table. Scroll if the row is wider than the window. Score is for this Master market only.</p>
+      <p class="reset-row"><button type="button" id="reset-players" class="reset-btn">Reset participants</button></p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr id="head-labels"></tr>
+            <tr id="head-coefs"></tr>
+          </thead>
+          <tbody id="book-body"></tbody>
+          <tfoot>
+            <tr id="book-foot"></tr>
+          </tfoot>
+        </table>
+      </div>
+    </section>
+  </main>
+  <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore-compat.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/master.js"></script>
+</body>
+</html>

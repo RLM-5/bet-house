@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Designer — Bet House</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600&family=Oswald:wght@500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand"><a href="index.html">Bet House</a></div>
+    <div id="mode" class="mode-pill">…</div>
+  </div>
+  <main class="shell wide">
+    <div class="subtabs">
+      <button type="button" id="view-table" class="active">Both houses</button>
+      <button type="button" id="view-qr">Player QR</button>
+    </div>
+    <section id="table-view">
+      <p class="table-note">Computer table. This score is not the Master score. Two Designer windows stay in sync through Firebase.</p>
+      <p class="reset-row"><button type="button" id="reset-players" class="reset-btn">Reset participants</button></p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr id="head-labels"></tr>
+            <tr id="head-coefs"></tr>
+          </thead>
+          <tbody id="body"></tbody>
+          <tfoot><tr id="foot"></tr></tfoot>
+        </table>
+      </div>
+    </section>
+    <section id="qr-view" class="qr-wrap hidden">
+      <canvas id="qr" width="420" height="420"></canvas>
+      <p class="qr-url" id="qr-url"></p>
+    </section>
+  </main>
+  <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore-compat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/designer.js"></script>
+</body>
+</html>
