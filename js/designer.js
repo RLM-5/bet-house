@@ -98,10 +98,15 @@
   function drawQr() {
     var url = BH.playerUrl();
     document.getElementById("qr-url").textContent = url;
-    var canvas = document.getElementById("qr");
-    if (window.QRCode) {
-      QRCode.toCanvas(canvas, url, { width: 420, margin: 1 }, function () {});
+    var holder = document.getElementById("qr-holder");
+    if (typeof qrcode !== "function") {
+      holder.innerHTML = '<img alt="Player QR" src="https://api.qrserver.com/v1/create-qr-code/?size=420x420&data=' + encodeURIComponent(url) + '">';
+      return;
     }
+    var qr = qrcode(0, "M");
+    qr.addData(url);
+    qr.make();
+    holder.innerHTML = qr.createImgTag(8, 12, "Player QR");
   }
 
   function paint() {
