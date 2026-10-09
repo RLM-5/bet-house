@@ -41,6 +41,7 @@
     document.getElementById("gate").classList.toggle("hidden", phase !== "gate");
     document.getElementById("bet").classList.toggle("hidden", phase !== "bet");
     document.getElementById("result").classList.toggle("hidden", phase !== "result");
+    document.getElementById("to-lobby").classList.toggle("hidden", next === "gate");
     if (next === "gate") clearSession();
     else saveSession();
   }
@@ -167,6 +168,7 @@
       pin = entered.pin;
       name = entered.name;
       document.getElementById("name").value = name;
+      history.replaceState(null, "", "player.html");
       BH.watchPlayer(pin, function (record) {
         if (!record) return;
         if (document.activeElement && document.activeElement.classList.contains("amount")) return;
@@ -199,13 +201,23 @@
     document.getElementById("pin").value = String(pin).indexOf("12345-") === 0 ? "12345" : pin;
     document.getElementById("name").value = name.replace(/\(test \d+\)$/, "");
     showPhase("gate");
+    history.replaceState(null, "", "player.html");
+  });
+  document.getElementById("to-lobby").addEventListener("click", function () {
+    document.getElementById("pin").value = "";
+    document.getElementById("name").value = "";
+    showPhase("gate");
+    history.replaceState(null, "", "player.html");
   });
   document.addEventListener("visibilitychange", function () { if (phase !== "gate") saveSession(); });
   BH.watchMarket("orange", function (m) { markets.orange = m; leaveBetIfPublished(); if (phase === "bet") renderBoard(); if (phase === "result") showResult(); });
   BH.watchMarket("red", function (m) { markets.red = m; leaveBetIfPublished(); if (phase === "bet") renderBoard(); if (phase === "result") showResult(); });
   var restored = null;
   try { restored = JSON.parse(sessionStorage.getItem(KEY) || "null"); } catch (e) {}
-  if (restored && restored.pin && restored.phase && restored.phase !== "gate") {
+  if (params.get("lobby") === "1") {
+    clearSession();
+    history.replaceState(null, "", "player.html");
+  } else if (restored && restored.pin && restored.phase && restored.phase !== "gate") {
     pin = restored.pin;
     name = restored.name || "";
     active = restored.active || active;

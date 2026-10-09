@@ -17,13 +17,23 @@
     document.getElementById("lobby").classList.add("hidden");
     document.getElementById("desk").classList.remove("hidden");
     document.getElementById("to-lobby").classList.remove("hidden");
+    history.replaceState(null, "", "designer.html");
     paint();
   }
   document.getElementById("pin").addEventListener("input", function (e) {
     if (e.target.value === window.DESIGNER_PIN) enter();
     else if (e.target.value.length >= 4) document.getElementById("lobby-note").textContent = "Wrong pin.";
   });
-  document.getElementById("to-lobby").addEventListener("click", function () { sessionStorage.removeItem(KEY); location.replace("designer.html"); });
+  function showLobby() {
+    authed = false;
+    sessionStorage.removeItem(KEY);
+    document.getElementById("desk").classList.add("hidden");
+    document.getElementById("lobby").classList.remove("hidden");
+    document.getElementById("to-lobby").classList.add("hidden");
+    document.getElementById("pin").value = "";
+    history.replaceState(null, "", "designer.html");
+  }
+  document.getElementById("to-lobby").addEventListener("click", showLobby);
 
   function renderTable() {
     var score = BH.parseScore(designer.score);
@@ -156,5 +166,7 @@
     if (authed && view === "table") renderTable();
   });
   document.addEventListener("visibilitychange", function () { if (authed) saveSession(); });
-  if (new URLSearchParams(location.search).get("pin") === window.DESIGNER_PIN || sessionStorage.getItem(KEY) === "1") enter();
+  var params = new URLSearchParams(location.search);
+  if (params.get("lobby") === "1") showLobby();
+  else if (params.get("pin") === window.DESIGNER_PIN || sessionStorage.getItem(KEY) === "1") enter();
 })();

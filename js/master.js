@@ -27,6 +27,7 @@
     document.getElementById("lobby").classList.add("hidden");
     document.getElementById("desk").classList.remove("hidden");
     document.getElementById("to-lobby").classList.remove("hidden");
+    history.replaceState(null, "", "master.html");
     paint();
   }
   function tryPin(value) {
@@ -46,10 +47,7 @@
     document.getElementById("pick-orange").classList.remove("on");
   });
   document.getElementById("pin").addEventListener("input", function (e) { if (e.target.value.length >= 3) tryPin(e.target.value); });
-  document.getElementById("to-lobby").addEventListener("click", function () {
-    sessionStorage.removeItem(KEY);
-    location.replace("master.html");
-  });
+  document.getElementById("to-lobby").addEventListener("click", showLobby);
 
   function renderIdentity() {
     var el = document.getElementById("identity");
@@ -66,12 +64,19 @@
   function renderRegime() {
     var m = current();
     var button = document.getElementById("regime");
-    button.textContent = m.status === "bets" ? "Bets" : "Weights";
+    button.classList.toggle("bets", m.status === "bets");
     button.disabled = viewId !== own || m.published || (m.betLocked && m.status === "bets");
     document.getElementById("status-label").textContent = (viewId === own ? "Your house" : "View only") + (m.published ? " · published" : " · open");
     document.getElementById("desk").classList.toggle("readonly", !editable());
-    var scoreInput = document.getElementById("score");
-    if (scoreInput) scoreInput.disabled = viewId !== own || current().published;
+  }
+  function showLobby() {
+    sessionStorage.removeItem(KEY);
+    own = "";
+    document.getElementById("desk").classList.add("hidden");
+    document.getElementById("lobby").classList.remove("hidden");
+    document.getElementById("to-lobby").classList.add("hidden");
+    document.getElementById("pin").value = "";
+    history.replaceState(null, "", "master.html");
   }
   function renderWeights() {
     var m = current();
@@ -180,11 +185,11 @@
     rows.forEach(function (r) { netSum += r.net; BH.ALL_KEYS.forEach(function (k) { totals[k] += parseInt(r.book[k], 10) || 0; }); });
     document.getElementById("book-foot").innerHTML = "<td>House</td>" + BH.OUTCOMES.map(function (o) { return "<td>" + totals[o.key] + "</td>"; }).join("") + "<td>" + BH.money(-netSum) + "</td>";
     var scoreInput = document.getElementById("score");
-    scoreInput.disabled = viewId !== own;
+    scoreInput.disabled = viewId !== own || m.published;
     if (!scoreInput.dataset.bound) {
       scoreInput.dataset.bound = "1";
       scoreInput.addEventListener("input", function () {
-        if (viewId !== own) return;
+        if (viewId !== own || markets[own].published) return;
         markets[own].masterScore = scoreInput.value;
         BH.saveMarket(own, { masterScore: scoreInput.value });
       });
@@ -227,9 +232,11 @@
   BH.watchMarket("red", function (m) { markets.red = m; if (own) paint(); });
   BH.watchPlayers(function (rows) { players = rows; if (own && view === "book") renderBook(); });
   document.addEventListener("visibilitychange", saveSession);
+  var params = new URLSearchParams(location.search);
   var query = location.search.replace(/^\?/, "");
   var direct = query === "172" || query === "pin=172" ? "orange" : query === "413" || query === "pin=413" ? "red" : "";
-  var saved = session();
-  if (direct) enter(direct);
-  else if (saved && saved.own) enter(saved.own);
+  if (params.get("lobby") === "1") {
+    showLobby();
+  } else if (direct) enter(direct);
+  else if (session() && session().own) enter(session().own);
 })();
