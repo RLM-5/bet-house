@@ -32,7 +32,8 @@
       masterScore: "",
       status: "weights",
       published: false,
-      betLocked: false,
+      betsLocked: false,
+      weightsLocked: false,
       coefs: {}
     };
   }
@@ -195,7 +196,8 @@
       masterScore: src.masterScore || "",
       status: src.status === "bets" ? "bets" : "weights",
       published: !!src.published,
-      betLocked: !!src.betLocked
+      betsLocked: !!src.betsLocked,
+      weightsLocked: !!src.weightsLocked
     };
   }
 
@@ -344,6 +346,27 @@
     });
   }
 
+  function deletePlayer(pin) {
+    var id = String(pin || "");
+    if (!id) return Promise.resolve();
+    if (mode === "firebase") {
+      var ref = db.collection("players").doc(id);
+      return ref.get().then(function (snap) {
+        var batch = db.batch();
+        batch.delete(ref);
+        if (snap.exists) {
+          var data = snap.data();
+          var key = data.nameKey || nameKey(data.name || "");
+          if (key) batch.delete(db.collection("nameKeys").doc(key));
+        }
+        return batch.commit();
+      });
+    }
+    delete preview.players[id];
+    savePreview();
+    return Promise.resolve();
+  }
+
   function watchDesigner(cb) {
     if (mode === "firebase") {
       return db.collection("designer").doc("state").onSnapshot(function (snap) {
@@ -477,6 +500,7 @@
     claimName: claimName,
     placeBet: placeBet,
     resetPlayers: resetPlayers,
+    deletePlayer: deletePlayer,
     watchDesigner: watchDesigner,
     saveDesigner: saveDesigner,
     playerUrl: playerUrl,

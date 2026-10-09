@@ -17,7 +17,7 @@
     try { sessionStorage.setItem(KEY, JSON.stringify({ own: own })); } catch (e) {}
   }
   function current() { return markets[viewId] || { targetProfit: 5, weights: BH.emptyBets(), coefs: {}, status: "weights", published: false }; }
-  function editable() { return viewId === own && !current().published && current().status === "weights"; }
+  function editable() { return viewId === own && !current().published && !current().weightsLocked && current().status === "weights"; }
   function escapeHtml(s) { return String(s).replace(/[&<>"']/g, function (c) { return "&#" + c.charCodeAt(0) + ";"; }); }
 
   function enter(house) {
@@ -65,8 +65,9 @@
     var m = current();
     var button = document.getElementById("regime");
     button.classList.toggle("bets", m.status === "bets");
-    button.disabled = viewId !== own || m.published || (m.betLocked && m.status === "bets");
-    document.getElementById("status-label").textContent = (viewId === own ? "Your house" : "View only") + (m.published ? " · published" : " · open");
+    button.disabled = viewId !== own || m.published;
+    var locks = (m.betsLocked ? " · bets locked" : "") + (m.weightsLocked ? " · weights locked" : "");
+    document.getElementById("status-label").textContent = (viewId === own ? "Your house" : "View only") + (m.published ? " · published" : " · open") + locks;
     document.getElementById("desk").classList.toggle("readonly", !editable());
   }
   function showLobby() {
@@ -144,7 +145,7 @@
   });
   document.getElementById("regime").addEventListener("click", function () {
     var m = markets[own];
-    if (!m || viewId !== own || m.published || (m.betLocked && m.status === "bets")) return;
+    if (!m || viewId !== own || m.published) return;
     var next = m.status === "bets" ? "weights" : "bets";
     m.status = next;
     BH.saveMarket(own, { status: next });
@@ -225,7 +226,9 @@
       markets[own].published = false;
       markets[own].status = "weights";
       markets[own].betLocked = false;
-      return BH.saveMarket(own, { published: false, status: "weights", betLocked: false });
+      markets[own].betsLocked = false;
+      markets[own].weightsLocked = false;
+      return BH.saveMarket(own, { published: false, status: "weights", betsLocked: false, weightsLocked: false });
     }).then(function () { paint(); });
   });
   BH.watchMarket("orange", function (m) { markets.orange = m; if (own) paint(); });

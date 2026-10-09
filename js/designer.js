@@ -88,7 +88,7 @@
         var cls = id === "orange" ? "house-orange" : "house-red";
         return BH.OUTCOMES.map(function (o) { return '<td class="' + cls + '">' + (parseInt(book[o.key], 10) || 0) + "</td>"; }).join("") + '<td class="' + cls + '">' + BH.money(id === "orange" ? r.oNet : r.rNet) + "</td>";
       }
-      return "<tr><td>" + escapeHtml(r.player.name || r.player.pin) + "</td>" + cells("orange", r.orange) + cells("red", r.red) + "<td>" + r.unused + "</td><td>" + BH.money(r.total) + "</td></tr>";
+      return "<tr><td class='who-cell'><button type='button' class='row-x' data-pin='" + escapeHtml(r.player.pin || "") + "'>×</button>" + escapeHtml(r.player.name || r.player.pin) + "</td>" + cells("orange", r.orange) + cells("red", r.red) + "<td>" + r.unused + "</td><td>" + BH.money(r.total) + "</td></tr>";
     }).join("");
     var houseNets = 0;
     var totals = { orange: BH.emptyBets(), red: BH.emptyBets() };
@@ -130,31 +130,55 @@
     document.getElementById("qr-view").classList.toggle("hidden", view !== "qr");
     document.getElementById("view-table").classList.toggle("active", view === "table");
     document.getElementById("view-qr").classList.toggle("active", view === "qr");
-    if (view === "table") renderTable(); else drawQr();
+    if (view === "table") { renderTable(); paintLocks(); } else drawQr();
   }
   document.getElementById("view-table").addEventListener("click", function () { view = "table"; paint(); });
   document.getElementById("view-qr").addEventListener("click", function () { view = "qr"; paint(); });
-  document.getElementById("bet-regime").addEventListener("click", function () {
-    if (!window.confirm("Lock both houses into Bets? Masters will not be able to return to Weights.")) return;
-    BH.saveMarket("orange", { status: "bets", betLocked: true });
-    BH.saveMarket("red", { status: "bets", betLocked: true });
+  function paintLocks() {
+    var bets = markets.orange && markets.orange.betsLocked;
+    var weights = markets.orange && markets.orange.weightsLocked;
+    document.getElementById("lock-bets").classList.toggle("bets", !!bets);
+    document.getElementById("lock-weights").classList.toggle("bets", !!weights);
+    var published = markets.orange && markets.red && markets.orange.published && markets.red.published;
+    document.getElementById("publish-switch").classList.toggle("bets", !!published);
+  }
+  function setLock(field, locked) {
+    var patch = {};
+    patch[field] = locked;
+    BH.saveMarket("orange", patch);
+    BH.saveMarket("red", patch);
+  }
+  document.getElementById("lock-bets").addEventListener("click", function () {
+    setLock("betsLocked", !(markets.orange && markets.orange.betsLocked));
   });
-  document.getElementById("publish").addEventListener("click", function () {
+  document.getElementById("lock-weights").addEventListener("click", function () {
+    setLock("weightsLocked", !(markets.orange && markets.orange.weightsLocked));
+  });
+  document.getElementById("publish-switch").addEventListener("click", function () {
+    var published = markets.orange && markets.red && markets.orange.published && markets.red.published;
+    if (published) {
+      BH.saveMarket("orange", { published: false });
+      BH.saveMarket("red", { published: false });
+      return;
+    }
     if (!BH.parseScore(designer.score)) { window.alert("Enter a valid score before publishing."); return; }
-    if (!window.confirm("Publish both houses with score " + designer.score + "? This replaces the master scores.")) return;
-    BH.saveMarket("orange", { published: true, masterScore: designer.score });
-    BH.saveMarket("red", { published: true, masterScore: designer.score });
+    var patch = { published: true, masterScore: designer.score, betsLocked: true, weightsLocked: true };
+    BH.saveMarket("orange", patch);
+    BH.saveMarket("red", patch);
   });
-  document.getElementById("unpublish").addEventListener("click", function () {
-    BH.saveMarket("orange", { published: false });
-    BH.saveMarket("red", { published: false });
+  document.getElementById("body").addEventListener("click", function (e) {
+    var button = e.target.closest(".row-x");
+    if (!button) return;
+    var pin = button.getAttribute("data-pin");
+    if (!pin || !window.confirm("Delete this player?")) return;
+    BH.deletePlayer(pin);
   });
   document.getElementById("reset-players").addEventListener("click", function () {
     if (!window.confirm("Reset both houses? All names and bets are erased, and both houses return to Weights, unpublished.")) return;
     BH.resetPlayers("all").then(function () {
-      return BH.saveMarket("orange", { published: false, status: "weights", betLocked: false });
+      return BH.saveMarket("orange", { published: false, status: "weights", betsLocked: false, weightsLocked: false });
     }).then(function () {
-      return BH.saveMarket("red", { published: false, status: "weights", betLocked: false });
+      return BH.saveMarket("red", { published: false, status: "weights", betsLocked: false, weightsLocked: false });
     });
   });
   BH.watchMarket("orange", function (m) { markets.orange = m; if (view === "table") renderTable(); });

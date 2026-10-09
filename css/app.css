@@ -387,7 +387,9 @@ th.house-red, td.house-red { background: #ffecea; }
   transition: transform 0.18s ease;
 }
 .switch.bets .knob { transform: translateX(100%); }
-.switch:disabled { opacity: 0.45; cursor: not-allowed; }
+.who-cell { position: relative; padding-left: 22px; }
+.row-x { display: none; position: absolute; left: 2px; top: 4px; border: 0; background: transparent; color: #9a4038; cursor: pointer; font-size: 16px; }
+.who-cell:hover .row-x, .who-cell:focus-within .row-x { display: block; }
 .reset-btn {
   border: 0;
   background: #e7e2da;

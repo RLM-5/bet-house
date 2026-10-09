@@ -57,7 +57,7 @@
   }
   function accepting(id) {
     var m = markets[id];
-    return !!(m && m.status === "bets" && !m.published);
+    return !!(m && m.status === "bets" && !m.published && !m.betsLocked);
   }
   function renderBoard() {
     if (bothPublished()) { showResult(); return; }
