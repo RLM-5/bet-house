@@ -6,7 +6,12 @@
   var active = Math.random() < 0.5 ? "orange" : "red";
   var pin = "";
   var name = "";
-  var phase = "gate";
+  var KEY = "bethouse-player";
+  function saveSession() {
+    if (phase === "gate") return;
+    try { sessionStorage.setItem(KEY, JSON.stringify({ pin: pin, name: name, phase: phase, active: active })); } catch (e) {}
+  }
+  function clearSession() { try { sessionStorage.removeItem(KEY); } catch (e) {} }
   var params = new URLSearchParams(location.search);
 
   document.getElementById("mode").textContent = BH.mode === "firebase" ? "Firebase" : "Preview";
@@ -36,6 +41,8 @@
     document.getElementById("gate").classList.toggle("hidden", phase !== "gate");
     document.getElementById("bet").classList.toggle("hidden", phase !== "bet");
     document.getElementById("result").classList.toggle("hidden", phase !== "result");
+    if (next === "gate") clearSession();
+    else saveSession();
   }
   function renderIdentity() {
     var icon = active === "orange" ? "icons/orange.png" : "icons/red.png";
@@ -193,7 +200,23 @@
     document.getElementById("name").value = name.replace(/\(test \d+\)$/, "");
     showPhase("gate");
   });
+  document.addEventListener("visibilitychange", function () { if (phase !== "gate") saveSession(); });
   BH.watchMarket("orange", function (m) { markets.orange = m; leaveBetIfPublished(); if (phase === "bet") renderBoard(); if (phase === "result") showResult(); });
   BH.watchMarket("red", function (m) { markets.red = m; leaveBetIfPublished(); if (phase === "bet") renderBoard(); if (phase === "result") showResult(); });
-  if (params.get("pin") && params.get("name")) document.getElementById("proceed").click();
+  var restored = null;
+  try { restored = JSON.parse(sessionStorage.getItem(KEY) || "null"); } catch (e) {}
+  if (restored && restored.pin && restored.phase && restored.phase !== "gate") {
+    pin = restored.pin;
+    name = restored.name || "";
+    active = restored.active || active;
+    BH.watchPlayer(pin, function (record) {
+      if (!record) return;
+      if (document.activeElement && document.activeElement.classList.contains("amount")) return;
+      applyRecord(record);
+      if (phase === "bet") renderBoard();
+      if (phase === "result") showResult();
+    });
+    showPhase(restored.phase);
+    renderBoard();
+  } else if (params.get("pin") && params.get("name")) document.getElementById("proceed").click();
 })();

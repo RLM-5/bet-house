@@ -23,7 +23,7 @@
     if (e.target.value === window.DESIGNER_PIN) enter();
     else if (e.target.value.length >= 4) document.getElementById("lobby-note").textContent = "Wrong pin.";
   });
-  document.getElementById("to-lobby").addEventListener("click", function () { sessionStorage.removeItem(KEY); location.href = "designer.html"; });
+  document.getElementById("to-lobby").addEventListener("click", function () { sessionStorage.removeItem(KEY); location.replace("designer.html"); });
 
   function renderTable() {
     var score = BH.parseScore(designer.score);

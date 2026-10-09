@@ -48,7 +48,7 @@
   document.getElementById("pin").addEventListener("input", function (e) { if (e.target.value.length >= 3) tryPin(e.target.value); });
   document.getElementById("to-lobby").addEventListener("click", function () {
     sessionStorage.removeItem(KEY);
-    location.href = "master.html";
+    location.replace("master.html");
   });
 
   function renderIdentity() {
@@ -69,7 +69,9 @@
     button.textContent = m.status === "bets" ? "Bets" : "Weights";
     button.disabled = viewId !== own || m.published || (m.betLocked && m.status === "bets");
     document.getElementById("status-label").textContent = (viewId === own ? "Your house" : "View only") + (m.published ? " · published" : " · open");
-    document.getElementById("desk").classList.toggle("readonly", viewId !== own || m.published || m.status !== "weights");
+    document.getElementById("desk").classList.toggle("readonly", !editable());
+    var scoreInput = document.getElementById("score");
+    if (scoreInput) scoreInput.disabled = viewId !== own || current().published;
   }
   function renderWeights() {
     var m = current();

@@ -356,7 +356,7 @@ tfoot td:first-child { background: #e7e2da; z-index: 3; }
 .pick img { width: 72px; height: 72px; object-fit: cover; mix-blend-mode: multiply; background: white; border-radius: 12px; }
 .pick.orange.on { border-color: var(--orange); background: #ffe8d2; }
 .pick.red.on { border-color: var(--red); background: #ffd9d4; }
-.readonly .amount, .readonly .weight, .readonly .score-input, .readonly .profit-input { pointer-events: none; background: #eeeae4; }
+.readonly .amount, .readonly .weight, .readonly .profit-input { pointer-events: none; background: #eeeae4; }
 .house-orange { background: #fff1e4; }
 .house-red { background: #ffecea; }
 th.house-orange, td.house-orange { background: #fff1e4; }
