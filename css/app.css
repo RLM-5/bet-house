@@ -331,7 +331,39 @@ tfoot td:first-child { background: #e7e2da; z-index: 3; }
 .score-input { max-width: 110px; padding: 8px; }
 .qr-wrap { display: grid; place-items: center; padding: 24px 8px 40px; }
 .qr-wrap canvas, .qr-wrap img { width: min(420px, 86vw); height: auto; background: white; border-radius: 16px; padding: 12px; }
-.reset-row { margin: 0 0 8px; }
+.mp { position: relative; display: inline-block; font-weight: 700; padding: 0 0.12em; }
+.mp span { position: relative; z-index: 1; }
+.mp::before, .mp::after {
+  content: "";
+  position: absolute;
+  left: -0.08em;
+  right: -0.08em;
+  top: 46%;
+  height: 1.5px;
+  background: currentColor;
+  transform: rotate(-32deg);
+  z-index: 2;
+}
+.mp::after { top: 58%; }
+.lobby-icons { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0; }
+.pick {
+  border: 3px solid transparent;
+  border-radius: 16px;
+  background: #efe7dc;
+  padding: 10px;
+  cursor: pointer;
+}
+.pick img { width: 72px; height: 72px; object-fit: cover; mix-blend-mode: multiply; background: white; border-radius: 12px; }
+.pick.orange.on { border-color: var(--orange); background: #ffe8d2; }
+.pick.red.on { border-color: var(--red); background: #ffd9d4; }
+.readonly .amount, .readonly .weight, .readonly .score-input, .readonly .profit-input { pointer-events: none; background: #eeeae4; }
+.house-orange { background: #fff1e4; }
+.house-red { background: #ffecea; }
+th.house-orange, td.house-orange { background: #fff1e4; }
+th.house-red, td.house-red { background: #ffecea; }
+.status-line { display: flex; justify-content: space-between; gap: 8px; align-items: center; margin-bottom: 8px; }
+.toggle { border: 0; border-radius: 999px; padding: 8px 12px; background: var(--ink); color: white; cursor: pointer; }
+.toggle:disabled, .reset-btn:disabled { opacity: 0.45; cursor: not-allowed; }
 .reset-btn {
   border: 0;
   background: #e7e2da;

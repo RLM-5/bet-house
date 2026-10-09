@@ -11,35 +11,44 @@
 <body>
   <div class="topbar">
     <div class="brand"><a href="index.html">Bet House</a></div>
-    <div id="mode" class="mode-pill">…</div>
+    <button id="to-lobby" class="ghost hidden" type="button">Lobby</button>
   </div>
   <main class="shell wide">
-    <div class="subtabs">
-      <button type="button" id="view-table" class="active">Both houses</button>
-      <button type="button" id="view-qr">Player QR</button>
-    </div>
-    <section id="table-view">
-      <p class="table-note">Computer table. This score is not the Master score. Two Designer windows stay in sync through Firebase.</p>
-      <p class="reset-row"><button type="button" id="reset-players" class="reset-btn">Reset participants</button></p>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr id="head-labels"></tr>
-            <tr id="head-coefs"></tr>
-          </thead>
-          <tbody id="body"></tbody>
-          <tfoot><tr id="foot"></tr></tfoot>
-        </table>
-      </div>
+    <section id="lobby" class="gate">
+      <h1>Designer</h1>
+      <div class="row"><input id="pin" inputmode="numeric" maxlength="4" placeholder="Pin"></div>
+      <p id="lobby-note" class="note"></p>
     </section>
-    <section id="qr-view" class="qr-wrap hidden">
-      <div id="qr-holder"></div>
-      <p class="qr-url" id="qr-url"></p>
+    <section id="desk" class="hidden">
+      <div class="subtabs">
+        <button type="button" id="view-table" class="active">Both houses</button>
+        <button type="button" id="view-qr">Player QR</button>
+      </div>
+      <section id="table-view">
+        <p class="reset-row">
+          <button type="button" id="bet-regime" class="reset-btn">Bet regime</button>
+          <button type="button" id="publish" class="reset-btn">Publish</button>
+          <button type="button" id="unpublish" class="reset-btn">Unpublish</button>
+          <button type="button" id="reset-players" class="reset-btn">Reset</button>
+        </p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr id="head-house"></tr><tr id="head-labels"></tr><tr id="head-coefs"></tr></thead>
+            <tbody id="body"></tbody>
+            <tfoot><tr id="foot"></tr></tfoot>
+          </table>
+        </div>
+      </section>
+      <section id="qr-view" class="qr-wrap hidden">
+        <div id="qr-holder"></div>
+        <p class="qr-url" id="qr-url"></p>
+      </section>
     </section>
   </main>
   <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore-compat.js"></script>
   <script src="js/qrcode.min.js"></script>
+  <script src="js/pins.js"></script>
   <script src="js/config.js"></script>
   <script src="js/common.js"></script>
   <script src="js/designer.js"></script>

@@ -15,30 +15,27 @@
   </div>
   <main class="shell">
     <section id="gate" class="gate">
-      <h1>Enter your name</h1>
-      <p>One name, once. It is stored before the ticket opens.</p>
-      <div class="row">
-        <input id="name" maxlength="24" autocomplete="off" placeholder="Name">
-        <button id="proceed" class="primary" type="button">Proceed</button>
-      </div>
+      <h1>Enter</h1>
+      <div class="row"><input id="name" maxlength="24" autocomplete="off" placeholder="Name"></div>
+      <div class="row" style="margin-top:8px"><input id="pin" inputmode="numeric" maxlength="5" autocomplete="off" placeholder="Pin"><button id="proceed" class="primary" type="button">Proceed</button></div>
       <p id="gate-note" class="note"></p>
     </section>
-
     <section id="bet" class="hidden">
-      <div class="wallet"><span>Available</span><b id="available">100</b><span>kSEK</span></div>
+      <div class="wallet"><span>Available</span><b id="available">100</b><span class="mp"><span>MP</span></span></div>
       <button id="place" class="primary bet-btn" type="button">Place your Bet</button>
       <div class="market-tabs">
         <button type="button" id="tab-orange">Orange</button>
         <button type="button" id="tab-red">Red</button>
       </div>
       <div id="identity" class="identity orange"></div>
+      <p id="regime" class="note"></p>
       <div id="board" class="board"></div>
     </section>
-
-    <section id="outro" class="outro hidden">
-      <h1>Bet placed</h1>
-      <p id="outro-lead"></p>
-      <div id="outro-body"></div>
+    <section id="result" class="outro hidden">
+      <h1>Result</h1>
+      <p id="result-lead"></p>
+      <div id="result-body"></div>
+      <button id="bet-again" class="primary bet-btn" type="button">Bet again</button>
     </section>
   </main>
   <div id="toast" class="toast hidden"></div>
@@ -53,6 +50,7 @@
   </div>
   <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore-compat.js"></script>
+  <script src="js/pins.js"></script>
   <script src="js/config.js"></script>
   <script src="js/common.js"></script>
   <script src="js/player.js"></script>

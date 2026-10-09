@@ -30,6 +30,9 @@
       targetProfit: 5,
       weights: emptyWeights(),
       masterScore: "",
+      status: "weights",
+      published: false,
+      betLocked: false,
       coefs: {}
     };
   }
@@ -189,7 +192,10 @@
       targetProfit: targetProfit,
       weights: weights,
       coefs: coefs,
-      masterScore: src.masterScore || ""
+      masterScore: src.masterScore || "",
+      status: src.status === "bets" ? "bets" : "weights",
+      published: !!src.published,
+      betLocked: !!src.betLocked
     };
   }
 
@@ -364,6 +370,92 @@
     return location.origin + path;
   }
 
+  function mp(value) {
+    return '<span class="mp"><span>' + value + '</span></span>';
+  }
+
+  function validPlayerPin(pin) {
+    return window.PLAYER_PINS.indexOf(String(pin)) !== -1 || String(pin) === window.TEST_PIN;
+  }
+
+  function watchPlayer(pin, cb) {
+    if (!pin) return function () {};
+    if (mode === "firebase") {
+      return db.collection("players").doc(pin).onSnapshot(function (snap) {
+        cb(snap.exists ? Object.assign({ pin: pin }, snap.data()) : null);
+      }, function () { cb(null); });
+    }
+    cb(preview.players[pin] ? Object.assign({ pin: pin }, preview.players[pin]) : null);
+    listeners.players.push(function () {
+      cb(preview.players[pin] ? Object.assign({ pin: pin }, preview.players[pin]) : null);
+    });
+    return function () {};
+  }
+
+  function savePlayer(pin, patch) {
+    if (mode === "firebase") {
+      patch.updatedAt = firebase.firestore.FieldValue.serverTimestamp();
+      return db.collection("players").doc(pin).set(patch, { merge: true });
+    }
+    preview.players[pin] = Object.assign({}, preview.players[pin], patch, { pin: pin });
+    savePreview();
+    return Promise.resolve();
+  }
+
+  function enterWithPin(pin, name) {
+    var cleanPin = String(pin || "").trim();
+    var cleanName = String(name || "").trim() || "Player";
+    if (!validPlayerPin(cleanPin)) {
+      var err = new Error("bad-pin");
+      err.code = "bad-pin";
+      return Promise.reject(err);
+    }
+    if (cleanPin === window.TEST_PIN) {
+      return nextTest(cleanName).then(function (made) {
+        return savePlayer(made.pin, {
+          pin: made.pin,
+          name: made.name,
+          test: true,
+          placed: false,
+          balanceLeft: 100,
+          orange: emptyBets(),
+          red: emptyBets()
+        }).then(function () { return { pin: made.pin, name: made.name, fresh: true }; });
+      });
+    }
+    var load = mode === "firebase"
+      ? db.collection("players").doc(cleanPin).get().then(function (snap) { return snap.exists ? snap.data() : null; })
+      : Promise.resolve(preview.players[cleanPin] || null);
+    return load.then(function (existing) {
+      var patch = { pin: cleanPin, name: cleanName };
+      if (!existing) {
+        patch.placed = false;
+        patch.balanceLeft = 100;
+        patch.orange = emptyBets();
+        patch.red = emptyBets();
+      }
+      return savePlayer(cleanPin, patch).then(function () {
+        return { pin: cleanPin, name: cleanName, fresh: !existing, existing: existing };
+      });
+    });
+  }
+
+  function nextTest(name) {
+    if (mode === "firebase") {
+      var ref = db.collection("meta").doc("testCounter");
+      return db.runTransaction(function (tx) {
+        return tx.get(ref).then(function (snap) {
+          var n = (snap.exists ? Number(snap.data().n) : 0) + 1;
+          tx.set(ref, { n: n });
+          return { pin: "12345-" + n, name: name + "(test " + n + ")" };
+        });
+      });
+    }
+    preview.testN = (preview.testN || 0) + 1;
+    savePreview();
+    return Promise.resolve({ pin: "12345-" + preview.testN, name: name + "(test " + preview.testN + ")" });
+  }
+
   window.BetHouse = {
     OUTCOMES: OUTCOMES,
     ALL_KEYS: ALL_KEYS,
@@ -387,6 +479,11 @@
     resetPlayers: resetPlayers,
     watchDesigner: watchDesigner,
     saveDesigner: saveDesigner,
-    playerUrl: playerUrl
+    playerUrl: playerUrl,
+    mp: mp,
+    validPlayerPin: validPlayerPin,
+    watchPlayer: watchPlayer,
+    savePlayer: savePlayer,
+    enterWithPin: enterWithPin
   };
 })();

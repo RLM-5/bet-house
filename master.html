@@ -11,46 +11,59 @@
 <body>
   <div class="topbar">
     <div class="brand"><a href="index.html">Bet House</a></div>
-    <div id="mode" class="mode-pill">…</div>
+    <button id="to-lobby" class="ghost hidden" type="button">Lobby</button>
   </div>
   <main class="shell wide">
-    <div class="market-tabs">
-      <button type="button" id="tab-orange">Orange</button>
-      <button type="button" id="tab-red">Red</button>
-    </div>
-    <div id="identity" class="identity orange"></div>
-    <div class="subtabs">
-      <button type="button" id="view-weights" class="active">Weights</button>
-      <button type="button" id="view-book">Participants</button>
-    </div>
-    <section id="weights">
-      <div class="profit-line">
-        <label for="profit">Target profit</label>
-        <input id="profit" class="profit-input" inputmode="decimal" value="5">
-        <span>%</span>
-        <span id="profit-warn" class="warn"></span>
+    <section id="lobby" class="gate">
+      <h1>Master</h1>
+      <div class="lobby-icons">
+        <button type="button" id="pick-orange" class="pick orange"><img src="icons/orange.png" alt="Orange"><div>Orange</div></button>
+        <button type="button" id="pick-red" class="pick red"><img src="icons/red.png" alt="Red"><div>Red</div></button>
       </div>
-      <div id="board" class="board"></div>
+      <div class="row"><input id="pin" inputmode="numeric" maxlength="3" placeholder="Pin"></div>
+      <p id="lobby-note" class="note"></p>
     </section>
-    <section id="book" class="hidden">
-      <p class="table-note">Computer table. Scroll if the row is wider than the window. Score is for this Master market only.</p>
-      <p class="reset-row"><button type="button" id="reset-players" class="reset-btn">Reset participants</button></p>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr id="head-labels"></tr>
-            <tr id="head-coefs"></tr>
-          </thead>
-          <tbody id="book-body"></tbody>
-          <tfoot>
-            <tr id="book-foot"></tr>
-          </tfoot>
-        </table>
+    <section id="desk" class="hidden">
+      <div class="market-tabs">
+        <button type="button" id="tab-orange">Orange</button>
+        <button type="button" id="tab-red">Red</button>
       </div>
+      <div id="identity" class="identity orange"></div>
+      <div class="status-line">
+        <span id="status-label"></span>
+        <button type="button" id="regime" class="toggle">Weights</button>
+      </div>
+      <div class="subtabs">
+        <button type="button" id="view-weights" class="active">Weights</button>
+        <button type="button" id="view-book">Participants</button>
+      </div>
+      <section id="weights">
+        <div class="profit-line">
+          <label for="profit">Target profit</label>
+          <input id="profit" class="profit-input" inputmode="decimal" value="5">
+          <span>%</span>
+          <span id="profit-warn" class="warn"></span>
+        </div>
+        <div id="board" class="board"></div>
+      </section>
+      <section id="book" class="hidden">
+        <p class="reset-row">
+          <button type="button" id="publish" class="reset-btn">Publish</button>
+          <button type="button" id="reset-players" class="reset-btn">Reset</button>
+        </p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr id="head-labels"></tr><tr id="head-coefs"></tr></thead>
+            <tbody id="book-body"></tbody>
+            <tfoot><tr id="book-foot"></tr></tfoot>
+          </table>
+        </div>
+      </section>
     </section>
   </main>
   <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore-compat.js"></script>
+  <script src="js/pins.js"></script>
   <script src="js/config.js"></script>
   <script src="js/common.js"></script>
   <script src="js/master.js"></script>
